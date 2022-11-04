@@ -141,7 +141,7 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
         * I look for the ID corresponding to the commune selected in admin
         */
         $storeCity = $this->scopeConfig->getValue('general/store_information/city',ScopeInterface::SCOPE_STORE);
-	$comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
+	    $comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
         $cityOrigin= $blueservice->getGeolocation("{$comuOrigin}");
 
         /**
@@ -153,7 +153,7 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
             if ($_item->getProductType() == 'configurable')
                 continue;
 
-            $_product = $_item->getProduct();
+                 $_product = $_item->getProduct();
 
             if ($_item->getParentItem())
                 $_item = $_item->getParentItem();
@@ -161,21 +161,21 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
                 $blueAlto = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'alto', $_product->getStoreId());
 
-		if($blueAlto == '' || $blueAlto != 0){
-			$blueAlto = 10;
-		}
+                if($blueAlto == '' || $blueAlto != 0){
+                    $blueAlto = 10;
+                }
 
                 $blueLargo = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'largo', $_product->getStoreId());
 
-		if($blueLargo == '' || $blueLargo != 0){
+		        if($blueLargo == '' || $blueLargo != 0){
                         $blueLargo = 10;
                 }
 
                 $blueAncho = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'ancho', $_product->getStoreId());
 
-		if($blueAncho == '' || $blueAncho != 0){
+		        if($blueAncho == '' || $blueAncho != 0){
                         $blueAncho = 10;
                 }
 
@@ -194,55 +194,55 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
          */
         $addressCity = $request->getDestCity();
         if($addressCity !=''){
-		$comudest= $blueservice->eliminarAcentos("{$addressCity}");
+		        $comudest= $blueservice->eliminarAcentos("{$addressCity}");
             	$citydest= $blueservice->getGeolocation("{$comudest}");
-            if($citydest){
-                /**
-                * I GENERATE THE ARRAY TO PASS IT TO THE API THAT WILL LOOK FOR THE PRICE
-                */
-                $seteoDatos = [
-                    "from" => [ "country" => "{$countryID}", "district" => "{$cityOrigin['districtCode']}" ],
-                    "to" => [ "country" => "{$countryID}", "state" => "{$citydest['regionCode']}", "district" => "{$citydest['districtCode']}" ],
-                    "serviceType" => "EX",
-                    "datosProducto" => [
-                        "producto" => "P",
-                        "familiaProducto" => "PAQU",
-                        "bultos" =>$itemProduct
-                    ]
-                ];
+                if($citydest){
+                    /**
+                    * I GENERATE THE ARRAY TO PASS IT TO THE API THAT WILL LOOK FOR THE PRICE
+                    */
+                    $seteoDatos = [
+                        "from" => [ "country" => "{$countryID}", "district" => "{$cityOrigin['districtCode']}" ],
+                        "to" => [ "country" => "{$countryID}", "state" => "{$citydest['regionCode']}", "district" => "{$citydest['districtCode']}" ],
+                        "serviceType" => "EX",
+                        "datosProducto" => [
+                            "producto" => "P",
+                            "familiaProducto" => "PAQU",
+                            "bultos" =>$itemProduct
+                        ]
+                    ];
 
-                $costoEnvio = $blueservice->getBXCosto($seteoDatos);
+                    $costoEnvio = $blueservice->getBXCosto($seteoDatos);
 
-                /*
-                * We format the data of the JSON String
-                */
-                $json = json_decode($costoEnvio,true);
-		$costo = 0;
-                foreach ($json as $key => $datos){
-                    if($key == 'data'){
-                        if(is_array($datos)){
-                            if($datos['total'] != '' && $datos['total'] != 0){
-                                $method->setPrice((int)$datos['total']);
-                                $method->setCost((int)$datos['total']);
+                    /*
+                    * We format the data of the JSON String
+                    */
+                    $json = json_decode($costoEnvio,true);
+                    $costo = 0;
+                    foreach ($json as $key => $datos){
+                        if($key == 'data'){
+                            if(is_array($datos)){
+                                if($datos['total'] != '' && $datos['total'] != 0){
+                                    $method->setPrice((int)$datos['total']);
+                                    $method->setCost((int)$datos['total']);
+                                }else{
+                                    $costo = -1;
+                                }
                             }else{
                                 $costo = -1;
                             }
-                        }else{
-                            $costo = -1;
                         }
                     }
-                }
 
-                $result->append($method);
+                    $result->append($method);
 
-                if($costo != -1){
-                    return $result;
+                    if($costo != -1){
+                        return $result;
+                    }else{
+                        return false;
+                    }
                 }else{
                     return false;
                 }
-            }else{
-                return false;
-            }
         }else{
             return false;
         }

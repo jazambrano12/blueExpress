@@ -141,7 +141,7 @@ class ShippingMd extends AbstractCarrier implements CarrierInterface
         * I look for the ID corresponding to the commune selected in admin
         */
         $storeCity = $this->scopeConfig->getValue('general/store_information/city',ScopeInterface::SCOPE_STORE);
-	$comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
+	    $comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
         $cityOrigin= $blueservice->getGeolocation("{$comuOrigin}");
 
         /**
@@ -194,8 +194,8 @@ class ShippingMd extends AbstractCarrier implements CarrierInterface
          */
         $addressCity = $request->getDestCity();
         if($addressCity !=''){
-		$comudest= $blueservice->eliminarAcentos("{$addressCity}");
-		$citydest= $blueservice->getGeolocation("{$comudest}");
+            $comudest= $blueservice->eliminarAcentos("{$addressCity}");
+            $citydest= $blueservice->getGeolocation("{$comudest}");
             if($citydest){
                 /**
                 * I GENERATE THE ARRAY TO PASS IT TO THE API THAT WILL LOOK FOR THE PRICE

@@ -142,7 +142,7 @@ class Blueservice
         $result = $this->curl->getBody();
 
         $tempData = str_replace("\\", "",$result);
-	$geolocation = json_decode($tempData, true);
+	    $geolocation = json_decode($tempData, true);
 
         $dadosGeo = [];
         foreach($geolocation['data'][0]['states'] as $indice=>$bxData){
