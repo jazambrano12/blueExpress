@@ -1,5 +1,5 @@
 {
-    "name": "blue/express",
+    "name": "blue-express/shipping",
     "description": "N/A",
     "require": {
         "php": "~7.4.0||~8.1.0",
@@ -24,7 +24,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Blue\\Express\\": ""
+            "blue-express\\Shipping\\": ""
         }
     },
     "version": "1.0.0"

@@ -1,7 +1,7 @@
 type Query {
     salesOrder (
         id: Int @doc(description: "Id of the Sales Order")
-    ): SalesOrder @resolver(class: "Blue\\Express\\Model\\Resolver\\SalesOrder") @doc(description: "The Sales Order query returns information about a Sales order")
+    ): SalesOrder @resolver(class: "BlueExpress\\Shipping\\Model\\Resolver\\SalesOrder") @doc(description: "The Sales Order query returns information about a Sales order")
 }
 
 type SalesOrder @doc(description: "Sales Order graphql gather Data of specific order information") {
