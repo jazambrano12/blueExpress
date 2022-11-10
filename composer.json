@@ -24,7 +24,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "blue-express\\Shipping\\": ""
+            "BlueExpress\\Shipping\\": ""
         }
     },
     "version": "1.0.0"
