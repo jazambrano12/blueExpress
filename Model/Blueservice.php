@@ -7,82 +7,111 @@ use BlueExpress\Shipping\Helper\Data as HelperBX;
 use Psr\Log\LoggerInterface;
 
 class Blueservice
-
 {
     /**
+     * 
+     * 
      * @var string
      */
     protected $_apiUrlGeo;
 
-     /**
-     * @var string
-     */
+    /**
+     * 
+    *
+    * @var string
+    */
     protected $_apiUrlPrice;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_clientaccount;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_usercode;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_bxapiKey;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_token;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_webhook;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_keywebhook;
 
     /**
+     * 
+     * 
      * @var HelperBX
      */
     protected $_helper;
 
+    /**
+     * 
+     * 
+     * @var LoggerInterface
+     */
     protected $logger;
 
+    /**
+     * 
+     * 
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
 
     /**
      * Webservice constructor.
      * @param CheckoutSession $checkoutSession
-     * @param HelperBX $helperBX
+     * @param HelperBX $_helper
      * @param \Magento\Framework\HTTP\Client\Curl $curl
+     * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
         HelperBX $helperBX,
         \Magento\Framework\HTTP\Client\Curl $curl,
         LoggerInterface $logger
     ) {
-        $this->_helper = $helperBX;
-        $this->curl = $curl;
-	    $this->logger = $logger;
-
+        $this->_helper        = $helperBX;
+        $this->curl           = $curl;
+        $this->logger         = $logger;
         $this->_clientaccount = $helperBX->getClientAccount();
-        $this->_usercode = $helperBX->getUserCode();
-	    $this->_bxapiKey = $helperBX->getBxapiKey();
-        $this->_apiUrlGeo = $helperBX->getBxapiGeo();
-        $this->_apiUrlPrice = $helperBX->getBxapiPrice();
-        $this->_token = $helperBX->getToken();
-	    $this->_webhook = $helperBX->getWebHook();
-	    $this->_keywebhook = $helperBX->getKeyWebHook();
+        $this->_usercode      = $helperBX->getUserCode();
+        $this->_bxapiKey      = $helperBX->getBxapiKey();
+        $this->_apiUrlGeo     = $helperBX->getBxapiGeo();
+        $this->_apiUrlPrice   = $helperBX->getBxapiPrice();
+        $this->_token         = $helperBX->getToken();
+        $this->_webhook       = $helperBX->getWebHook();
+        $this->_keywebhook    = $helperBX->getKeyWebHook();
     }
 
     /**
+     * 
      * @param mixed $datosParams
      * @return array
      */
@@ -100,6 +129,7 @@ class Blueservice
     }
 
     /**
+     * 
      * @param array $shippingParams
      * @return array
      */
@@ -124,7 +154,6 @@ class Blueservice
      *
      * @param string $shippingCity
      * @return array
-     *
      */
     public function getGeolocation($shippingCity)
     {
