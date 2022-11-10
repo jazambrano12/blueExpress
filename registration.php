@@ -7,4 +7,3 @@ ComponentRegistrar::register(
     'BlueExpress_Shipping',
     __DIR__
 );
-
