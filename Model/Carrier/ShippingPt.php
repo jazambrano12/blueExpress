@@ -145,6 +145,10 @@ class ShippingPt extends AbstractCarrier implements CarrierInterface
 	    $comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
         $cityOrigin= $blueservice->getGeolocation("{$comuOrigin}");
 
+        if($countryID != 'CL' || empty($cityOrigin)){
+            return false;
+        }
+        
         /**
          * I get the product data
          */

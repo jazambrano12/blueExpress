@@ -144,6 +144,10 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
 	    $comuOrigin= $blueservice->eliminarAcentos("{$storeCity}");
         $cityOrigin= $blueservice->getGeolocation("{$comuOrigin}");
 
+        if($countryID != 'CL' || empty($cityOrigin)){
+            return false;
+        }
+
         /**
          * I get the product data
          */
@@ -196,7 +200,7 @@ class ShippingEx extends AbstractCarrier implements CarrierInterface
         if($addressCity !=''){
                 $comudest= $blueservice->eliminarAcentos("{$addressCity}");
                 $citydest= $blueservice->getGeolocation("{$comudest}");
-                if(array_key_exists('districtCode',$cityOrigin) && array_key_exists('districtCode',$citydest)){
+                if($citydest){
                     /**
                     * I GENERATE THE ARRAY TO PASS IT TO THE API THAT WILL LOOK FOR THE PRICE
                     */
