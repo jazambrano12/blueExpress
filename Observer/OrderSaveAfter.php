@@ -84,14 +84,14 @@ class OrderSaveAfter implements ObserverInterface
         $shipping = $orders->getShippingAddress();
         $shippingAddress = [];
         $billingAddress = [];
-        $billiDistrict = '';
-        $ShipiDistrict = '';
+        $ShipiDistrict = [];
+        $shipiRegion = [];
 
         if(isset($shipping) && $shipping->getEntityId()){
 
             $comuna = $blueservice->eliminarAcentos($shipping->getCity());
             $destricCity = $blueservice->getGeolocation("{$comuna}");
-            if(isset($destricCity)){
+            if(array_key_exists("districtCode",$destricCity)){
                 $ShipiDistrict = $destricCity['districtCode'];
                 $shipiRegion = $destricCity['regionCode'];
             }
@@ -99,7 +99,7 @@ class OrderSaveAfter implements ObserverInterface
             $billing = $orders->getBillingAddress();
             $comunaBilling = $blueservice->eliminarAcentos($billing->getCity());
             $destricBillingCity = $blueservice->getGeolocation("{$comunaBilling}");
-            if(isset($destricCity)){
+            if(array_key_exists("districtCode",$destricCity)){
                 $billiDistrict = $destricBillingCity['districtCode'];
                 $billiRegion = $destricBillingCity['regionCode'];
             }
