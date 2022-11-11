@@ -12,30 +12,45 @@ use BlueExpress\Shipping\Helper\Data as HelperBX;
 class OrderSaveAfter implements ObserverInterface
 {
     /**
-    * @var
-    */
+     * 
+     * 
+     * @var Blueservice
+     */
     protected $_blueservice;
 
     /**
+     * 
+     * 
      * @var string
      */
     protected $_weigthStore;
 
+    /**
+     * 
+     * 
+     * @var LoggerInterface
+     */
     protected $logger;
 
-    /* @var \Magento\Store\Model\StoreManagerInterface
+    /**
+     *
+     * 
+     * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $_storeManager;
 
     /**
      *
+     * @param  \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Blueservice $blueservice
+     * @param HelperBX $helperBX
+     * @param LoggerInterface $logger
      *
      */
     public function __construct(
-	\Magento\Store\Model\StoreManagerInterface $storeManager,
+	    \Magento\Store\Model\StoreManagerInterface $storeManager,
         Blueservice $blueservice,
-	HelperBX $helperBX,
+	    HelperBX $helperBX,
         LoggerInterface $logger
     ){
         $this->_storeManager = $storeManager;
@@ -53,7 +68,7 @@ class OrderSaveAfter implements ObserverInterface
         $incrementId    = $observer->getEvent()->getOrder()->getIncrementId();
         $status         = $observer->getEvent()->getOrder()->getStatus();
         $state          = $observer->getEvent()->getOrder()->getState();
-	$weight_uni 	= $this->_weigthStore;
+	    $weight_uni 	= $this->_weigthStore;
 
 	 /**
          * I CONNECT TO THE SERVICE TO SEND THROUGH THE WEBHOOK
@@ -66,97 +81,100 @@ class OrderSaveAfter implements ObserverInterface
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
         $orders = $objectManager->create('Magento\Sales\Model\Order')->load($orderID);
         $detailOrder = $orders->getData();
-	$shipping = $orders->getShippingAddress();
-	$shippingAddress = [];
-	$billingAddress = [];
+        $shipping = $orders->getShippingAddress();
+        $shippingAddress = [];
+        $billingAddress = [];
+        $billiDistrict = '';
+        $ShipiDistrict = '';
 
-        If(isset($shipping) && $shipping->getEntityId()){
+        if(isset($shipping) && $shipping->getEntityId()){
 
-		$comuna = $blueservice->eliminarAcentos($shipping->getCity());
-                $destricCity = $blueservice->getGeolocation("{$comuna}");
-		if(isset($destricCity)){
-			$ShipiDistrict = $destricCity['districtCode'];
-			$shipiRegion = $destricCity['regionCode'];
-		}
+            $comuna = $blueservice->eliminarAcentos($shipping->getCity());
+            $destricCity = $blueservice->getGeolocation("{$comuna}");
+            if(isset($destricCity)){
+                $ShipiDistrict = $destricCity['districtCode'];
+                $shipiRegion = $destricCity['regionCode'];
+            }
 
-		$billing = $orders->getBillingAddress();
-		$comunaBilling = $blueservice->eliminarAcentos($billing->getCity());
-		$destricBillingCity = $blueservice->getGeolocation("{$comunaBilling}");
-		if(isset($destricCity)){
-                        $billiDistrict = $destricBillingCity['districtCode'];
-                        $billiRegion = $destricBillingCity['regionCode'];
-                }
+            $billing = $orders->getBillingAddress();
+            $comunaBilling = $blueservice->eliminarAcentos($billing->getCity());
+            $destricBillingCity = $blueservice->getGeolocation("{$comunaBilling}");
+            if(isset($destricCity)){
+                $billiDistrict = $destricBillingCity['districtCode'];
+                $billiRegion = $destricBillingCity['regionCode'];
+            }
 
             $shippingAddress = [
-                "entity_id"=> $shipping->getEntityID(),
-                "parent_id"=> $shipping->getParentId(),
-                "quote_address_id"=> $shipping->getQuoteAddressId(),
-                "region_id"=> $shipping->getRegionId(),
-                "region"=> $shipping->getRegion(),
-                "postcode"=> $shipping->getPostCode(),
-                "lastname"=> $shipping->getLastname(),
-                "street"=> $shipping->getStreet(),
-                "city"=> $blueservice->eliminarAcentos($shipping->getCity()),
-		"district" => $ShipiDistrict,
-                "state" => $shipiRegion,
-                "email"=> $shipping->getEmail(),
-                "telephone"=> $shipping->getTelephone(),
-                "country_id"=> $shipping->getCountryId(),
-                "firstname"=> $shipping->getFirstname(),
-                "address_type"=> $shipping->getAddressType(),
-                "company"=> $shipping->getCompany()
+                "entity_id"         => $shipping->getEntityID(),
+                "parent_id"         => $shipping->getParentId(),
+                "quote_address_id"  => $shipping->getQuoteAddressId(),
+                "region_id"         => $shipping->getRegionId(),
+                "region"            => $shipping->getRegion(),
+                "postcode"          => $shipping->getPostCode(),
+                "lastname"          => $shipping->getLastname(),
+                "street"            => $shipping->getStreet(),
+                "city"              => $blueservice->eliminarAcentos($shipping->getCity()),
+                "district"          => $ShipiDistrict,
+                "state"             => $shipiRegion,
+                "email"             => $shipping->getEmail(),
+                "telephone"         => $shipping->getTelephone(),
+                "country_id"        => $shipping->getCountryId(),
+                "firstname"         => $shipping->getFirstname(),
+                "address_type"      => $shipping->getAddressType(),
+                "company"           => $shipping->getCompany()
             ];
 
-	    $billing = $orders->getBillingAddress();
+            $billing = $orders->getBillingAddress();
             $billingAddress = [
-                "entity_id"=> $billing->getEntityID(),
-                "parent_id"=> $billing->getParentId(),
-                "quote_address_id"=> $billing->getQuoteAddressId(),
-                "region_id"=> $billing->getRegionId(),
-                "region"=> $billing->getRegion(),
-                "postcode"=> $billing->getPostCode(),
-                "lastname"=> $billing->getLastname(),
-                "street"=> $billing->getStreet(),
-                "city"=> $blueservice->eliminarAcentos($billing->getCity()),
-		"district" => $billiDistrict,
-                "state" => $billiRegion,
-                "email"=> $billing->getEmail(),
-                "telephone"=> $billing->getTelephone(),
-                "country_id"=> $billing->getCountryId(),
-                "firstname"=> $billing->getFirstname(),
-                "address_type"=> $billing->getAddressType(),
-                "company"=> $billing->getCompany()
+                "entity_id"         => $billing->getEntityID(),
+                "parent_id"         => $billing->getParentId(),
+                "quote_address_id"  => $billing->getQuoteAddressId(),
+                "region_id"         => $billing->getRegionId(),
+                "region"            => $billing->getRegion(),
+                "postcode"          => $billing->getPostCode(),
+                "lastname"          => $billing->getLastname(),
+                "street"            => $billing->getStreet(),
+                "city"              => $blueservice->eliminarAcentos($billing->getCity()),
+		        "district"          => $billiDistrict,
+                "state"             => $billiRegion,
+                "email"             => $billing->getEmail(),
+                "telephone"         => $billing->getTelephone(),
+                "country_id"        => $billing->getCountryId(),
+                "firstname"         => $billing->getFirstname(),
+                "address_type"      => $billing->getAddressType(),
+                "company"           => $billing->getCompany()
             ];
         }
+
 	    $ProductDetail = array();
 	    $dimensiones = array();
 	    $objectManager  = \Magento\Framework\App\ObjectManager::getInstance();
-            $resource       = $objectManager->get(\Magento\Catalog\Model\ResourceModel\Product::class);
+        $resource       = $objectManager->get(\Magento\Catalog\Model\ResourceModel\Product::class);
 
 	    foreach( $orders->getAllVisibleItems() as $item ) {
 
 	        $ProductDetail[] = $item->getData();
-		$alto           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'alto', 0);
-		$ancho          = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'ancho', 0);
-            	$largo          = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'largo', 0);
+            $alto            = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'alto', 0);
+            $ancho           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'ancho', 0);
+            $largo           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'largo', 0);
 
-		if(empty($alto) || $alto == 0){
-			$alto  = 10;
-		}
+            if(empty($alto) || $alto == 0){
+                $alto  = 10;
+            }
 
-		if(empty($ancho) || $ancho == 0){
-                        $ancho  = 10;
-                }
+            if(empty($ancho) || $ancho == 0){
+                    $ancho  = 10;
+            }
 
-		if(empty($largo) || $largo == 0){
-                        $largo  = 10;
-                }
+            if(empty($largo) || $largo == 0){
+                    $largo  = 10;
+            }
 
-            	$dimensiones[]    = [
-                	"height"	=> $alto,
-                	"width"		=> $ancho,
-                	"large"		=> $largo
-           	];
+            $dimensiones[]    = [
+                    "height"	=> $alto,
+                    "width"		=> $ancho,
+                    "large"		=> $largo
+            ];
 	    }
 
         /**
@@ -166,7 +184,7 @@ class OrderSaveAfter implements ObserverInterface
         $baseUrl = $storeManager->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_WEB);
 
         if($state == 'processing' && ( $detailOrder['shipping_method'] =='bxexpress_bxexpress' || $detailOrder['shipping_method'] =='bxprioritario_bxprioritario' || $detailOrder['shipping_method'] == 'bxPremium_bxPremium' || $detailOrder['shipping_method'] == 'bxsameday_bxsameday')) {
-	    $typeCarrier = '';
+	        $typeCarrier = '';
             switch ($detailOrder['shipping_method']){
                 case 'bxexpress_bxexpress':
                     $typeCarrier = "EX";
@@ -174,7 +192,7 @@ class OrderSaveAfter implements ObserverInterface
                 case 'bxprioritario_bxprioritario':
                     $typeCarrier = "PY";
                     break;
-		case 'bxsameday_bxsameday':
+		        case 'bxsameday_bxsameday':
                     $typeCarrier = "MD";
                     break;
                 default:
@@ -188,15 +206,15 @@ class OrderSaveAfter implements ObserverInterface
                     "DetailOrder"   => $detailOrder,
                     "Shipping" 	    => $shippingAddress,
                     "Billing"	    => $billingAddress,
-		    "type_carrier"  => $typeCarrier,
+		            "type_carrier"  => $typeCarrier,
                     "Product" 	    => $ProductDetail,
-		    "dimensions"    => $dimensiones,
+		            "dimensions"    => $dimensiones,
                     "Origin"=>[
                     "Account" => $baseUrl
                     ]
             ];
 
-	    $this->logger->info('Information sent to the webhook',['Detalle' => $destricCity]);
+	        $this->logger->info('Information sent to the webhook',['Detalle' => $destricCity]);
             $respuestaWebhook = $blueservice->getBXOrder($pedido);
        }
     }
