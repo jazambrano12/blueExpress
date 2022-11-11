@@ -153,9 +153,6 @@ class ShippingPt extends AbstractCarrier implements CarrierInterface
          * I get the product data
          */
         $itemProduct = [];
-        $blueAlto       = 10;
-        $blueLargo      = 10;
-        $blueAncho      = 10;
 
         foreach ($request->getAllItems() as $_item) {
             if ($_item->getProductType() == 'configurable')
@@ -168,12 +165,24 @@ class ShippingPt extends AbstractCarrier implements CarrierInterface
 
                 $blueAlto = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'alto', $_product->getStoreId());
-                    
+
+		        if($blueAlto == '' || $blueAlto == 0){
+                        $blueAlto = 10;
+                }
+
                 $blueLargo = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'largo', $_product->getStoreId());
-                    
+
+		        if($blueLargo == '' || $blueLargo == 0){
+                        $blueLargo = 10;
+                }
+
                 $blueAncho = (int) $_product->getResource()
                     ->getAttributeRawValue($_product->getId(), 'ancho', $_product->getStoreId());
+
+		        if($blueAncho == '' || $blueAncho == 0){
+                        $blueAncho = 10;
+                }
 
 		        $itemProduct[] = [
                     'largo'         => $blueAlto,
