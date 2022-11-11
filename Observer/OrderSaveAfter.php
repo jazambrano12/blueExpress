@@ -78,27 +78,31 @@ class OrderSaveAfter implements ObserverInterface
         /**
          * OBTAINING THE DETAIL OF THE ORDER
          */
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-        $orders = $objectManager->create('Magento\Sales\Model\Order')->load($orderID);
-        $detailOrder = $orders->getData();
-        $shipping = $orders->getShippingAddress();
-        $shippingAddress = [];
-        $billingAddress = [];
-        $ShipiDistrict = [];
-        $shipiRegion = [];
+        $objectManager      = \Magento\Framework\App\ObjectManager::getInstance();
+        $orders             = $objectManager->create('Magento\Sales\Model\Order')->load($orderID);
+        $detailOrder        = $orders->getData();
+        $shipping           = $orders->getShippingAddress();
+        $shippingAddress    = [];
+        $billingAddress     = []; 
 
         if(isset($shipping) && $shipping->getEntityId()){
 
-            $comuna = $blueservice->eliminarAcentos($shipping->getCity());
-            $destricCity = $blueservice->getGeolocation("{$comuna}");
+            $comuna         = $blueservice->eliminarAcentos($shipping->getCity());
+            $destricCity    = $blueservice->getGeolocation("{$comuna}");
+            $ShipiDistrict  = [];
+            $shipiRegion    = [];
+            
             if(array_key_exists("districtCode",$destricCity)){
                 $ShipiDistrict = $destricCity['districtCode'];
                 $shipiRegion = $destricCity['regionCode'];
             }
 
-            $billing = $orders->getBillingAddress();
-            $comunaBilling = $blueservice->eliminarAcentos($billing->getCity());
+            $billing            = $orders->getBillingAddress();
+            $comunaBilling      = $blueservice->eliminarAcentos($billing->getCity());
             $destricBillingCity = $blueservice->getGeolocation("{$comunaBilling}");
+            $billiDistrict      = [];
+            $billiRegion        = [];
+
             if(array_key_exists("districtCode",$destricCity)){
                 $billiDistrict = $destricBillingCity['districtCode'];
                 $billiRegion = $destricBillingCity['regionCode'];
