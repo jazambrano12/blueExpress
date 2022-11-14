@@ -5,13 +5,12 @@ namespace BlueExpress\Shipping\Helper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Helper\AbstractHelper;
 
-
 class Data extends AbstractHelper
 {
 
     /**
-     * 
-     * 
+     *
+     *
      * @var ScopeConfigInterface
      */
     protected $_scopeConfig;
@@ -28,8 +27,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function de cuenta del cliente de la Api
-     * 
+     * Function de cuenta del cliente de la Api
+     *
      * @return string
      */
     public function getClientAccount()
@@ -41,8 +40,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function de user code de la Api
-     * 
+     * Function de user code de la Api
+     *
      * @return string
      */
     public function getUserCode()
@@ -54,8 +53,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function de key de la Api precio
-     * 
+     * Function de key de la Api precio
+     *
      * @return string
      */
     public function getBxapiKey()
@@ -67,8 +66,8 @@ class Data extends AbstractHelper
     }
 
      /**
-      * function de url de la Api geo
-      * 
+      * Function de url de la Api geo
+      *
       * @return string
       */
     public function getBxapiGeo()
@@ -80,10 +79,10 @@ class Data extends AbstractHelper
     }
 
     /**
-    * function de url de la Api precio
-    * 
-    * @return string
-    */
+     * Function de url de la Api precio
+     *
+     * @return string
+     */
     public function getBxapiPrice()
     {
         return $this->_scopeConfig->getValue(
@@ -93,8 +92,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function de token para la Api
-     * 
+     * Function de token para la Api
+     *
      * @return string
      */
     public function getToken()
@@ -106,8 +105,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function para conexion webhook
-     * 
+     * Function para conexion webhook
+     *
      * @return string
      */
     public function getWebHook()
@@ -119,8 +118,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function para la key del webhook
-     * 
+     * Function para la key del webhook
+     *
      * @return string
      */
     public function getKeyWebhook()
@@ -132,8 +131,8 @@ class Data extends AbstractHelper
     }
 
     /**
-     * function para obtener peso del producto
-     * 
+     * Function para obtener peso del producto
+     *
      * @return string
      */
     public function getWeightUnit()

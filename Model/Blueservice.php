@@ -4,83 +4,84 @@ namespace BlueExpress\Shipping\Model;
 
 use Magento\Checkout\Model\Session as CheckoutSession;
 use BlueExpress\Shipping\Helper\Data as HelperBX;
-use Psr\Log\LoggerInterface;
+use Magento\Framework\HTTP\Client\Curl as Curl;
+use Psr\Log\LoggerInterface as LoggerInterface;
 
 class Blueservice
 {
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_apiUrlGeo;
 
     /**
-     * 
-    *
-    * @var string
-    */
+     *
+     *
+     * @var string
+     */
     protected $_apiUrlPrice;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_clientaccount;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_usercode;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_bxapiKey;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_token;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_webhook;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var string
      */
     protected $_keywebhook;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var HelperBX
      */
-    protected $_helper;
+    protected $helperBX;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * 
-     * 
+     *
+     *
      * @var CheckoutSession
      */
     protected $checkoutSession;
@@ -88,16 +89,15 @@ class Blueservice
     /**
      * Webservice constructor.
      * @param CheckoutSession $checkoutSession
-     * @param HelperBX $_helper
-     * @param \Magento\Framework\HTTP\Client\Curl $curl
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param HelperBX $helperBX
+     * @param Curl $curl
+     * @param LoggerInterface $logger
      */
     public function __construct(
         HelperBX $helperBX,
-        \Magento\Framework\HTTP\Client\Curl $curl,
+        Curl $curl,
         LoggerInterface $logger
-    ) {
-        $this->_helper        = $helperBX;
+    ) { 
         $this->curl           = $curl;
         $this->logger         = $logger;
         $this->_clientaccount = $helperBX->getClientAccount();
@@ -111,7 +111,7 @@ class Blueservice
     }
 
     /**
-     * 
+     * Funcion para el envio de la orden
      * @param mixed $datosParams
      * @return array
      */
@@ -129,35 +129,33 @@ class Blueservice
     }
 
     /**
-     * 
+     * Funcion para buscar el costo del despacho
      * @param array $shippingParams
      * @return array
      */
     public function getBXCosto($shippingParams)
     {
-	    $this->logger->info('Information sent to api price',$shippingParams);
-
-            $headers = [
-                "Content-Type" => "application/json",
-                "Accept" => "application/json",
-                "apikey" => "{$this->_bxapiKey}",
-                "BX-TOKEN" => "{$this->_token}"
-            ];
-            $this->curl->setHeaders($headers);
-            $this->curl->post("{$this->_apiUrlPrice}", json_encode($shippingParams));
-            $result = $this->curl->getBody();
-
+        $this->logger->info('Information sent to api price',$shippingParams);
+        $headers = [
+            "Content-Type" => "application/json",
+            "Accept" => "application/json",
+            "apikey" => "{$this->_bxapiKey}",
+            "BX-TOKEN" => "{$this->_token}"
+        ];
+        $this->curl->setHeaders($headers);
+        $this->curl->post("{$this->_apiUrlPrice}", json_encode($shippingParams));
+        $result = $this->curl->getBody();
+        
         return $result;
     }
 
     /**
-     *
+     * Funcion para setear la comuna
      * @param string $shippingCity
      * @return array
      */
     public function getGeolocation($shippingCity)
     {
-
         $headers = [
             "Content-Type" => "application/json",
             "Accept" => "application/json",
@@ -174,8 +172,8 @@ class Blueservice
 	    $geolocation = json_decode($tempData, true);
 
         $dadosGeo = [];
-        foreach($geolocation['data'][0]['states'] as $indice=>$bxData){
-            foreach($bxData['ciudades'] as $indiceC=>$bxDataC){
+        foreach($geolocation['data'][0]['states'] as $bxData){
+            foreach($bxData['ciudades'] as $bxDataC){
                 if(strtolower($bxDataC['name']) ==strtolower($shippingCity)){
                     $dadosGeo['regionCode']     = $bxData['code'];
                     $dadosGeo['cidadeName']     = $bxDataC['name'];
@@ -184,8 +182,8 @@ class Blueservice
                 }
             }
             if(array_key_exists('cidadeName',$dadosGeo) && $dadosGeo['cidadeName'] == ''){
-                foreach($bxData['ciudades'] as $indiceC=>$bxDataC){
-                    foreach($bxDataC['districts'] as $indiceD=>$bxDataD){
+                foreach($bxData['ciudades'] as $bxDataC){
+                    foreach($bxDataC['districts'] as $bxDataD){
                         if(strtolower($bxDataD['name']) ==strtolower($shippingCity)){
                             $dadosGeo['regionCode']     = $bxData['code'];
                             $dadosGeo['cidadeName']     = $bxDataC['name'];

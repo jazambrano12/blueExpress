@@ -158,9 +158,9 @@ class OrderSaveAfter implements ObserverInterface
 	    foreach( $orders->getAllVisibleItems() as $item ) {
 
 	        $ProductDetail[] = $item->getData();
-            $alto            = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'alto', 0);
-            $ancho           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'ancho', 0);
-            $largo           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'largo', 0);
+            $alto            = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'height', 0);
+            $ancho           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'width', 0);
+            $largo           = $resource->getAttributeRawValue($resource->getIdBySku($item->getSku()), 'large', 0);
 
             if(empty($alto) || $alto == 0){
                 $alto  = 10;
